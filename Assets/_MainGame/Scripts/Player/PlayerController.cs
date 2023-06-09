@@ -9,9 +9,12 @@ public class PlayerController : MonoBehaviour
     public float rotateSpeed = 25f; //Speed the player rotate
     public float speed = 7f; //Speed the player rotate
     public float maxVelocityChange = 10.0f;
+    public float slipperyForce = 1000f;
+    public float slipperyMaxSpeed = 10f;
     GameObject mainCamera;
     public CapsuleCollider capCol;
     public LayerMask groundLayer;
+    public LayerMask slipperyLayer;
     Timer countdownToDieTimer = new Timer();
     Vector3 checkPoint;
     // Start is called before the first frame update
@@ -27,7 +30,15 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         UpdateInputPlaying();
-        UpdateMovement();
+
+        if (CheckSlippery())
+        {
+            UpdateSlippery();
+        }
+        else
+        {
+            UpdateMovement();
+        }
         //Debug.Log("HasGroundUnder " + HasFloorUnder());
     }
 
@@ -108,8 +119,14 @@ public class PlayerController : MonoBehaviour
 
     public bool HasFloorUnder()
     {
-        return Physics.CheckCapsule(capCol.bounds.center, new Vector3(capCol.bounds.center.x, capCol.bounds.min.y - Mathf.Abs(50f), capCol.bounds.center.z), capCol.radius * 0.25f, groundLayer);
+        return Physics.CheckCapsule(capCol.bounds.center, new Vector3(capCol.bounds.center.x, capCol.bounds.min.y - Mathf.Abs(50f), capCol.bounds.center.z), capCol.radius * 0.25f, groundLayer | slipperyLayer);
     }
+
+    public bool CheckSlippery()
+    {
+        return Physics.CheckCapsule(capCol.bounds.center, new Vector3(capCol.bounds.center.x, capCol.bounds.min.y - 0.2f, capCol.bounds.center.z), capCol.radius * 0.25f, slipperyLayer);
+    }
+
     void UpdatePlayerDie()
     {
         if(HasFloorUnder()) // check if player on ground
@@ -141,7 +158,18 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter " + other.tag);
         checkPoint = other.gameObject.transform.position;
+    }
+
+    void UpdateSlippery()
+    {
+        UpdateFaceDir();
+
+        Vector3 slideVal = moveDir * slipperyForce * Time.deltaTime;
+        m_rb.AddForce(slideVal, ForceMode.Acceleration);
+        if (m_rb.velocity.magnitude > slipperyMaxSpeed)
+        {
+            m_rb.velocity = m_rb.velocity.normalized * slipperyMaxSpeed;
+        }
     }
 }
