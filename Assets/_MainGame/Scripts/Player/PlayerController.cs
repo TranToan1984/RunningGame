@@ -10,17 +10,25 @@ public class PlayerController : MonoBehaviour
     public float speed = 7f; //Speed the player rotate
     public float maxVelocityChange = 10.0f;
     GameObject mainCamera;
+    public CapsuleCollider capCol;
+    public LayerMask groundLayer;
+    Timer countdownToDieTimer = new Timer();
+    Vector3 checkPoint;
     // Start is called before the first frame update
     void Start()
     {
         m_rb = GetComponent<Rigidbody>();
     }
-
+    void Update()
+    {
+        UpdatePlayerDie();
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
         UpdateInputPlaying();
         UpdateMovement();
+        //Debug.Log("HasGroundUnder " + HasFloorUnder());
     }
 
     public void UpdateInputPlaying()
@@ -96,5 +104,44 @@ public class PlayerController : MonoBehaviour
     public void HitPlayer(Vector3 velocityF, float bounceTime)
     {
         m_rb.velocity = velocityF; // add velocity
+    }
+
+    public bool HasFloorUnder()
+    {
+        return Physics.CheckCapsule(capCol.bounds.center, new Vector3(capCol.bounds.center.x, capCol.bounds.min.y - Mathf.Abs(50f), capCol.bounds.center.z), capCol.radius * 0.25f, groundLayer);
+    }
+    void UpdatePlayerDie()
+    {
+        if(HasFloorUnder()) // check if player on ground
+        {
+            countdownToDieTimer.SetTimerDone(); //don't set countdown to die
+        }
+        else
+        {
+            if(countdownToDieTimer.IsDone())
+            {
+                countdownToDieTimer.SetDuration(1); //set duration before player die
+            }
+            else
+            {
+                countdownToDieTimer.Update(Time.deltaTime); // countdown to die
+                if(countdownToDieTimer.JustFinished())
+                {
+                    DeadAndRespawn();
+                }
+            }
+        }
+    }
+
+    void DeadAndRespawn()
+    {
+        m_rb.velocity = Vector3.zero; //remove velocity
+        transform.position = checkPoint; //spawn player at latest checkpoint
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("OnTriggerEnter " + other.tag);
+        checkPoint = other.gameObject.transform.position;
     }
 }
