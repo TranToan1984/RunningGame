@@ -92,4 +92,9 @@ public class PlayerController : MonoBehaviour
         if (Mathf.Abs(m_rb.velocity.magnitude) < speed * 2.0f)
             m_rb.AddForce(velocityChange, ForceMode.VelocityChange);
     }
+
+    public void HitPlayer(Vector3 velocityF, float bounceTime)
+    {
+        m_rb.velocity = velocityF; // add velocity
+    }
 }
