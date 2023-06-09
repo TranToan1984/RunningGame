@@ -6,8 +6,6 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody m_rb;
     Vector3 moveDir;
-    float horizontalInput = 0;
-    float verticalInput = 0;
     public float rotateSpeed = 25f; //Speed the player rotate
     public float speed = 7f; //Speed the player rotate
     public float maxVelocityChange = 10.0f;
@@ -25,7 +23,7 @@ public class PlayerController : MonoBehaviour
         UpdateMovement();
     }
 
-    void UpdateInputPlaying()
+    public void UpdateInputPlaying()
     {
         moveDir = GetMoveDirection();
     }
@@ -34,6 +32,7 @@ public class PlayerController : MonoBehaviour
     {
         float deltaX = 0;
         float deltaY = 0;
+        //get input from keyboard
         deltaX += Input.GetAxisRaw("Horizontal");
         deltaY += Input.GetAxisRaw("Vertical");
 
@@ -50,21 +49,17 @@ public class PlayerController : MonoBehaviour
             v2.y = 0;
             h2.y = 0;
             v2 += v2 * dist;
-            h2 += h2 * dist;
-            horizontalInput = deltaX;
-            verticalInput = deltaY;
+            h2 += h2 * dist;;
 
             return (v2 + h2).normalized; //Global position to which I want to move in magnitude 1
         }
         else
         {
-            horizontalInput = 0;
-            verticalInput = 0;
             return Vector3.zero;
         }
     }
 
-    protected virtual void UpdateFaceDir()
+    public void UpdateFaceDir()
     {
         Vector3 targetDir = moveDir; //Direction of the character
 
@@ -78,7 +73,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = targetRotation;
     }
 
-    protected void UpdateMovement()
+    public void UpdateMovement()
     {
         UpdateFaceDir();
 
