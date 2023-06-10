@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public float maxVelocityChange = 10.0f;
     public float slipperyForce = 1000f;
     public float slipperyMaxSpeed = 10f;
+    public float deadDistance = 50f;
     GameObject mainCamera;
     public CapsuleCollider capCol;
     public LayerMask groundLayer;
@@ -59,20 +60,11 @@ public class PlayerController : MonoBehaviour
 
         if (Mathf.Abs(deltaX) >= 0.2f || Mathf.Abs(deltaY) >= 0.2f)
         {
-            if (!mainCamera)
-            {
-                mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            }
-
-            Vector3 v2 = deltaY * mainCamera.transform.forward; //Vertical axis to which I want to move with respect to the camera
-            Vector3 h2 = deltaX * mainCamera.transform.right; //Horizontal axis to which I want to move with respect to the camera
-            float dist = mainCamera.transform.position.y - this.transform.position.y;
-            v2.y = 0;
-            h2.y = 0;
-            v2 += v2 * dist;
-            h2 += h2 * dist;;
-
-            return (v2 + h2).normalized; //Global position to which I want to move in magnitude 1
+            Vector3 v = new Vector3(0, 0, deltaY);//Vertical axis which calculate with z
+            Vector3 h = new Vector3(deltaX, 0, 0);//Horizontal axis which calculat with x
+            v.y = 0; //don't use y
+            h.y = 0; //don't use y
+            return (v + h).normalized; //Global position to which I want to move in magnitude 1
         }
         else
         {
@@ -121,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
     public bool HasFloorUnder()
     {
-        return Physics.CheckCapsule(capCol.bounds.center, new Vector3(capCol.bounds.center.x, capCol.bounds.min.y - Mathf.Abs(50f), capCol.bounds.center.z), capCol.radius * 0.25f, groundLayer | slipperyLayer);
+        return Physics.CheckCapsule(capCol.bounds.center, new Vector3(capCol.bounds.center.x, capCol.bounds.min.y - deadDistance, capCol.bounds.center.z), capCol.radius * 0.25f, groundLayer | slipperyLayer);
     }
 
     public bool CheckSlippery()
@@ -162,23 +154,21 @@ public class PlayerController : MonoBehaviour
     {
         if (other.tag == "CheckPoint")
         {
-            checkPoint = other.gameObject.transform.position;
+            checkPoint = other.gameObject.transform.position; //save check point
         }
         else if(other.tag == "FinishRace")
         {
-            GameManager.Instance.SetState(GameManager.GAME_STATE.FINISH);
+            GameManager.Instance.SetState(GameManager.GAME_STATE.FINISH); //finish the race
         }
     }
 
+    //if player is on slippery ground
     void UpdateSlippery()
     {
+        //update direction of character
         UpdateFaceDir();
 
-        Vector3 slideVal = moveDir * slipperyForce * Time.deltaTime;
+        Vector3 slideVal = moveDir * slipperyForce * Time.deltaTime; //calculate slide value
         m_rb.AddForce(slideVal, ForceMode.Acceleration);
-        if (m_rb.velocity.magnitude > slipperyMaxSpeed)
-        {
-            m_rb.velocity = m_rb.velocity.normalized * slipperyMaxSpeed;
-        }
     }
 }
