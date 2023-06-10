@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (GameManager.Instance.m_State == GameManager.GAME_STATE.FINISH)
+            return;
         UpdateInputPlaying();
 
         if (CheckSlippery())
@@ -158,7 +160,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        checkPoint = other.gameObject.transform.position;
+        if (other.tag == "CheckPoint")
+        {
+            checkPoint = other.gameObject.transform.position;
+        }
+        else if(other.tag == "FinishRace")
+        {
+            GameManager.Instance.SetState(GameManager.GAME_STATE.FINISH);
+        }
     }
 
     void UpdateSlippery()
