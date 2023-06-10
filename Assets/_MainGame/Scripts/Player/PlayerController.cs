@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void DeadAndRespawn()
+    public void DeadAndRespawn()
     {
         m_rb.velocity = Vector3.zero; //remove velocity
         transform.position = checkPoint; //spawn player at latest checkpoint
