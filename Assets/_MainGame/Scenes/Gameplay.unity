@@ -4902,7 +4902,7 @@ GameObject:
   - component: {fileID: 1391697330}
   - component: {fileID: 1391697331}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Path
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5046,7 +5046,7 @@ GameObject:
   - component: {fileID: 1463999119}
   - component: {fileID: 1463999118}
   m_Layer: 6
-  m_Name: Plane
+  m_Name: OrangePath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
