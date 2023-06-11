@@ -42,10 +42,10 @@ public class CannonHandler : MonoBehaviour
             }
         }
 
-        //if no bullet in pool or still have active bullet
+        //if no bullet in pool or no have inactive bullet
         if (bullet == null)
         {
-            bullet = Instantiate(canonBulletPrefab, shootPos.position, Quaternion.identity).GetComponent<BulletHandler>();
+            bullet = Instantiate(canonBulletPrefab, shootPos.position, Quaternion.identity).GetComponent<BulletHandler>(); // instantiate new bullet
             bullet.transform.SetParent(shootPos);
             canonBulletList.Add(bullet); //add bullet in pool
         }
