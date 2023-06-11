@@ -52,4 +52,9 @@ public class CannonHandler : MonoBehaviour
 
         return bullet.gameObject;
     }
+
+    private void OnDestroy()
+    {
+        canonBulletList.Clear();
+    }
 }
