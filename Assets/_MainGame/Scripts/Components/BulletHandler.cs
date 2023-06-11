@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletHandler : MonoBehaviour
 {
-    Rigidbody rb;
+    Rigidbody m_rb;
     Timer lifeTimer = new Timer();
     // Start is called before the first frame update
     void Start()
@@ -17,7 +17,7 @@ public class BulletHandler : MonoBehaviour
         lifeTimer.Update(Time.deltaTime);
         if (lifeTimer.JustFinished())
         {
-            gameObject.SetActive(false);
+            gameObject.SetActive(false); //after 3s, automatically inactive bullet
         }
     }
 
@@ -25,11 +25,11 @@ public class BulletHandler : MonoBehaviour
     {
         gameObject.SetActive(true);
         lifeTimer.SetDuration(3.0f); //life time is 3s
-        if (!rb) rb = GetComponent<Rigidbody>();
-        rb.isKinematic = false;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        rb.AddForce(-shootForce * rb.mass);
+        if (!m_rb) m_rb = GetComponent<Rigidbody>();
+        m_rb.isKinematic = false;
+        m_rb.velocity = Vector3.zero;
+        m_rb.angularVelocity = Vector3.zero;
+        m_rb.AddForce(-shootForce * m_rb.mass);
     }
 
     private void OnCollisionEnter(Collision collision)

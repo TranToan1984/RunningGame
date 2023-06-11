@@ -170,5 +170,10 @@ public class PlayerController : MonoBehaviour
 
         Vector3 slideVal = moveDir * slipperyForce * Time.deltaTime; //calculate slide value
         m_rb.AddForce(slideVal, ForceMode.Acceleration);
+        //avoid player still have acceleration after out from slippery ground
+        //if (m_rb.velocity.magnitude > slipperyMaxSpeed)
+        //{
+        //    m_rb.velocity = m_rb.velocity.normalized * slipperyMaxSpeed;
+        //}
     }
 }

@@ -19,24 +19,25 @@ public class CannonHandler : MonoBehaviour
     void Update()
     {
         spawnCanonBulletTime.Update(Time.deltaTime);
-        if (spawnCanonBulletTime.JustFinished())
+        if (spawnCanonBulletTime.JustFinished()) //after 3s we will shoot a bullet
         {
             spawnCanonBulletTime.Reset();
             GameObject go = GetFreeBullet();// get bullet from pool object
-            go.GetComponent<BulletHandler>().SetActive(transform.forward * forceShoot);
+            go.GetComponent<BulletHandler>().SetActive(transform.forward * forceShoot); // active bullet
         }
     }
 
     public GameObject GetFreeBullet()
     {
         BulletHandler bullet = null;
+        //search in the pool
         foreach (var cb in canonBulletList)
         {
-            if (!cb.Active()) //if already bullet and it is inactive, get it
+            if (!cb.Active()) //if has already bullet and it is inactive, get it
             {
                 bullet = cb;
-                bullet.transform.localPosition = Vector3.zero;
-                bullet.transform.localRotation = Quaternion.identity;
+                bullet.transform.localPosition = Vector3.zero; //reset position of bullet
+                bullet.transform.localRotation = Quaternion.identity; //reset rotation of bullet
                 break;
             }
         }
